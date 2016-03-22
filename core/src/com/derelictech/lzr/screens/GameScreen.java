@@ -6,12 +6,10 @@ import com.badlogic.gdx.ScreenAdapter;
 /**
  * Created by Tim on 3/22/2016.
  */
-public class GameScreen extends ScreenAdapter {
+public class GameScreen extends AbstractGameScreen {
 
-    Game game;
-
-    public GameScreen(Game lzrGame) {
-        this.game = lzrGame;
+    public GameScreen(Game game) {
+        super(game);
     }
 
     @Override
