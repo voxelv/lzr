@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.derelictech.lzr.util.Const;
+import com.derelictech.lzr.units.TriangleBeamWeapon;
 import com.derelictech.lzr.util.TextActor;
 
 
@@ -42,6 +43,10 @@ public class WelcomeScreen extends AbstractGameScreen{
         lzrText.setPosition(welcomeText.getX() + 100, welcomeText.getY() - 100);
         lzrText.font.setColor(0, 0.8f, 0.8f, 1);
         stage.addActor(lzrText);
+
+        TriangleBeamWeapon tri = new TriangleBeamWeapon("triangle");
+        tri.setPosition(100, 100);
+        stage.addActor(tri);
     }
 
     @Override

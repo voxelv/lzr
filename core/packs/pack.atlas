@@ -1,0 +1,27 @@
+
+pack.png
+size: 512,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+badlogic
+  rotate: false
+  xy: 2, 53
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+beam
+  rotate: false
+  xy: 260, 304
+  size: 3, 5
+  orig: 3, 5
+  offset: 0, 0
+  index: -1
+triangle
+  rotate: false
+  xy: 2, 2
+  size: 49, 49
+  orig: 49, 49
+  offset: 0, 0
+  index: -1
