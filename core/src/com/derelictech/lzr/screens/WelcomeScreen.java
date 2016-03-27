@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.*;
 import com.derelictech.lzr.util.Const;
 import com.derelictech.lzr.units.TriangleBeamWeapon;
 import com.derelictech.lzr.util.TextActor;
@@ -35,12 +34,13 @@ public class WelcomeScreen extends AbstractGameScreen{
         Gdx.input.setInputProcessor(stage);
 
         TextActor welcomeText = new TextActor(Const.WELCOME_TEXT, 50);
-        welcomeText.setPosition(100, Gdx.graphics.getHeight() - 30);
+        welcomeText.setPosition(100, Gdx.graphics.getHeight() - welcomeText.getHeight());
         welcomeText.font.setColor(1, 0, 0, 1);
         stage.addActor(welcomeText);
 
         TextActor lzrText = new TextActor(Const.GAME_NAME + ".", 100);
-        lzrText.setPosition(welcomeText.getX() + 100, welcomeText.getY() - 100);
+//        lzrText.setPosition(welcomeText.getX() + 100, welcomeText.getY() - 100);
+        lzrText.setPosition(Gdx.graphics.getWidth() - lzrText.getWidth(), welcomeText.getY() - 100);
         lzrText.font.setColor(0, 0.8f, 0.8f, 1);
         stage.addActor(lzrText);
 

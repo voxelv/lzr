@@ -1,8 +1,10 @@
 package com.derelictech.lzr.units;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.derelictech.lzr.effects.LaserBeam;
 import com.derelictech.lzr.util.AbstractLZRActorGroup;
 
 /**
@@ -10,22 +12,9 @@ import com.derelictech.lzr.util.AbstractLZRActorGroup;
  */
 public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
-    private class FireArea extends Actor {
-        public Rectangle zone = new Rectangle(this.getX(), this.getY(), 1000, 3);
-
-        public FireArea() {
-        }
-    }
+    private LaserBeam beam;
 
     Action rotate = new Action() {
-        @Override
-        public boolean act(float delta) {
-            rotateBy(delta * 45.0f);
-            return false;
-        }
-    };
-
-    Action sense = new Action() {
         @Override
         public boolean act(float delta) {
             rotateBy(delta * 45.0f);
@@ -37,7 +26,8 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         super(name);
         setOrigin(12, 24);
 
-        addActor(new FireArea());
+        beam = new LaserBeam(new Vector2(48, 22), new Vector2(1000, 24));
+        addActor(beam);
 
         addAction(this.rotate);
     }

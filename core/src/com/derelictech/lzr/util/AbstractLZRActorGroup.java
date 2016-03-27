@@ -2,6 +2,8 @@ package com.derelictech.lzr.util;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
 /**
@@ -22,6 +24,9 @@ public abstract class AbstractLZRActorGroup extends Group {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        applyTransform(batch, computeTransform());
+        drawChildren(batch, parentAlpha);
+        resetTransform(batch);
         batch.draw(region, this.getX(), this.getY(), this.getOriginX(), this.getOriginY(),
                 this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());
     }
