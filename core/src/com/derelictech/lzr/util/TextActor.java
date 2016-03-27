@@ -1,8 +1,10 @@
 package com.derelictech.lzr.util;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -18,6 +20,8 @@ public class TextActor extends Actor {
     public FreeTypeFontGenerator generator;
     public FreeTypeFontGenerator.FreeTypeFontParameter parameter;
 
+    private Pixmap pixmap;
+
     public TextActor(String text, int size) {
         init(text, size);
     }
@@ -28,11 +32,14 @@ public class TextActor extends Actor {
         parameter.size = size;
         font = generator.generateFont(parameter);
         this.text = text;
-        generator.dispose();
-    }
 
-    private void init(String text) {
-        init(text, 12);
+        SpriteBatch batch = new SpriteBatch();
+        batch.begin();
+        this.setWidth(font.draw(batch, text, 0, 0).width);
+        batch.end();
+        batch.dispose();
+
+        generator.dispose();
     }
 
     @Override
