@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.derelictech.lzr.effects.LaserBeam;
 import com.derelictech.lzr.screens.WelcomeScreen;
 import com.derelictech.lzr.util.AbstractLZRActorGroup;
@@ -14,7 +15,9 @@ import com.derelictech.lzr.util.AbstractLZRActorGroup;
 public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
     private LaserBeam beam;
-    private static float rotationSpeed = 90;
+    private static float rotationSpeed = 180;
+
+    private boolean firing = false;
 
     private Action rotate = new Action() {
         @Override
@@ -26,7 +29,9 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
     };
 
     private class RotateTo extends Action {
-        Vector2 coords;
+        private Vector2 coords;
+        private boolean follow = false;
+        private Actor followActor;
 
         public RotateTo() {
             coords = new Vector2();
@@ -43,8 +48,16 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
             coords.set(x, y);
         }
 
+        public void setFollowActor(Actor followActor) {
+            this.followActor = followActor;
+        }
+
         @Override
         public boolean act(float delta) {
+            if(follow) {
+                setCoords(followActor.getX(), followActor.getY());
+            }
+
             float angle = (float) (MathUtils.radiansToDegrees * Math.atan2(coords.y - getY() - getOriginY(),
                     coords.x - getX() - getOriginX())); // angle between -180 and 180
 
@@ -60,6 +73,8 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                 // End condition
                 if (getRotation() + (delta * rotationSpeed) > angle && angle > getRotation()) {
                     lookAt(coords);
+                    beam.setLength(localToStageCoordinates(new Vector2 (beam.getX(), beam.getY())).dst(coords));
+                    firing = true;
                     removeAction(rotateTo);
                     return true; // Done
                 }
@@ -73,6 +88,8 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                 // End condition
                 if (getRotation() - (delta * rotationSpeed) < angle && angle < getRotation()) {
                     lookAt(coords);
+                    beam.setLength(localToStageCoordinates(new Vector2 (beam.getX(), beam.getY())).dst(coords));
+                    firing = true;
                     removeAction(rotateTo);
                     return true; // Done
                 }
@@ -90,10 +107,8 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         super("triangle");
         setOrigin(12.5f, 24.5f);
 
-        beam = new LaserBeam(new Vector2(48, 22), new Vector2(1000, 24));
+        beam = new LaserBeam(new Vector2(48, 22), new Vector2(200, 24));
         addActor(beam);
-
-//        addAction(this.rotate);
     }
 
     public void lookAt(Vector2 v) {
@@ -118,5 +133,22 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         if(!getActions().contains(rotateTo, true)) {
             this.addAction(rotateTo);
         }
+    }
+
+    public void followActor(Actor a) {
+        rotateTo.setFollowActor(a);
+        if(!getActions().contains(rotateTo, true)) {
+            this.addAction(rotateTo);
+        }
+    }
+
+    public void fireAt(float x, float y) {
+        stopFiring();
+        rotateToPoint(x, y);
+    }
+
+    public void stopFiring() {
+        beam.setLength(0);
+        firing = false;
     }
 }

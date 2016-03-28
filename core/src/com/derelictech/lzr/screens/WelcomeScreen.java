@@ -2,6 +2,7 @@ package com.derelictech.lzr.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -36,11 +37,23 @@ public class WelcomeScreen extends AbstractGameScreen{
         viewport = new FitViewport(Const.WELCOME_VIEWPORT_WIDTH, Const.WELCOME_VIEWPORT_HEIGHT, camera);
         stage = new Stage(viewport);
         stage.addListener(new ClickListener(){
+
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 super.clicked(event, x, y);
-                tri.rotateToPoint(x, y);
+                switch(button) {
+                    case Input.Buttons.LEFT:
+                        tri.fireAt(x, y);
+                        break;
+                    case Input.Buttons.RIGHT:
+                        tri.stopFiring();
+                        break;
+                    default:
+                        break;
+                }
+                return true;
             }
+
         });
 
         Gdx.input.setInputProcessor(stage);

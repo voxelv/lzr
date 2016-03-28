@@ -1,5 +1,6 @@
 package com.derelictech.lzr.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -42,5 +43,9 @@ public class LaserBeam extends Actor {
         batch.draw(region, this.getX(), this.getY(), this.getOriginX(), this.getOriginY(),
                 start.dst(end), region.getRegionHeight(), 1.0f, 1.0f, this.getRotation());
         batch.setColor(c);
+    }
+
+    public void setLength(float len) {
+        end.x = len + getX();
     }
 }
