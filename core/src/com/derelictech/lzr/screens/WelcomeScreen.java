@@ -8,10 +8,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.*;
+import com.derelictech.lzr.util.Assets;
 import com.derelictech.lzr.util.Const;
 import com.derelictech.lzr.units.TriangleBeamWeapon;
 import com.derelictech.lzr.util.TextActor;
@@ -28,12 +31,15 @@ public class WelcomeScreen extends AbstractGameScreen{
 
     TextActor welcomeText;
     TextActor lzrText;
+    Button play_btn;
+    Button quit_btn;
+
     TriangleBeamWeapon tri;
 
     public WelcomeScreen(Game game) {
         super(game);
 
-        camera = new OrthographicCamera(Const.WELCOME_VIEWPORT_WIDTH, Const.WELCOME_VIEWPORT_HEIGHT);
+        camera = new OrthographicCamera();
         viewport = new FitViewport(Const.WELCOME_VIEWPORT_WIDTH, Const.WELCOME_VIEWPORT_HEIGHT, camera);
         stage = new Stage(viewport);
         stage.addListener(new ClickListener(){
@@ -58,21 +64,32 @@ public class WelcomeScreen extends AbstractGameScreen{
 
         Gdx.input.setInputProcessor(stage);
 
-        welcomeText = new TextActor(Const.WELCOME_TEXT, 50);
+        welcomeText = new TextActor(Const.WELCOME_TEXT, 80);
         welcomeText.setPosition(100, Gdx.graphics.getHeight() - welcomeText.getHeight());
         welcomeText.font.setColor(1, 0, 0, 1);
         stage.addActor(welcomeText);
 
-        lzrText = new TextActor(Const.GAME_NAME + ".", 100);
-        lzrText.setPosition(Gdx.graphics.getWidth() - lzrText.getWidth() - 100, welcomeText.getY() - 100);
+        lzrText = new TextActor(Const.GAME_NAME + ".", 150);
+        lzrText.setPosition(welcomeText.getX(), welcomeText.getY() - 100);
         lzrText.font.setColor(0, 0.8f, 0.8f, 1);
         stage.addActor(lzrText);
 
+        play_btn = new Button(
+                new TextureRegionDrawable(Assets.inst.getRegion("play_btn_up")),
+                new TextureRegionDrawable(Assets.inst.getRegion("play_btn_dn"))
+        );
+        play_btn.setPosition(lzrText.getX(), lzrText.getY() - 250);
+        stage.addActor(play_btn);
+
+        quit_btn = new Button(
+                new TextureRegionDrawable(Assets.inst.getRegion("quit_btn_up")),
+                new TextureRegionDrawable(Assets.inst.getRegion("quit_btn_dn"))
+        );
+        quit_btn.setPosition(play_btn.getX(), play_btn.getY() - 70);
+        stage.addActor(quit_btn);
+
         tri = new TriangleBeamWeapon();
-//        tri.setPosition(welcomeText.getX() - tri.getOriginX(),
-//                welcomeText.getY() - 100 - lzrText.getHeight() - tri.getOriginY());
-//        tri.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-        tri.setPosition(100, 100);
+        tri.setPosition(1000, 500);
         stage.addActor(tri);
     }
 
