@@ -1,10 +1,12 @@
 package com.derelictech.lzr.units;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.derelictech.lzr.effects.LaserBeam;
 import com.derelictech.lzr.util.AbstractLZRActorGroup;
 
@@ -14,28 +16,75 @@ import com.derelictech.lzr.util.AbstractLZRActorGroup;
 public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
     private LaserBeam beam;
-    private static float rotationSpeed = 180;
+    private static float rotationSpeed = 45;
 
-    private boolean ignoreOneClick = false;
+    private boolean selecting = false; // Ignore a click if it was the selecting click
 
-    @Override
-    public boolean leftClickAction(InputEvent event, float x, float y, int pointer, int button) {
-        if(!ignoreOneClick) {
-            if (isSelected()) {
-                fireAt(x, y);
-                return true;
-            } else return false;
+    private ClickListener stageListener = new ClickListener() {
+        @Override
+        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            super.touchDown(event, x, y, pointer, button);
+
+            boolean result = false;
+            if(!selecting) {
+                switch (button) {
+                    case Input.Buttons.LEFT:
+                        result = leftClickAction(event, x, y);
+                        break;
+                    case Input.Buttons.MIDDLE:
+                        result = middleClickAction(event, x, y);
+                        break;
+                    case Input.Buttons.RIGHT:
+                        result = rightClickAction(event, x, y);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                selecting = false;
+                result = true;
+            }
+
+            return result;
         }
-        else {
-            ignoreOneClick = false;
+    };
+
+    private ClickListener selectListener = new ClickListener() {
+        @Override
+        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            switch(button) {
+                case Input.Buttons.LEFT:
+                    if (isSelected()) {
+                        deselect();
+                    } else {
+                        select();
+                    }
+                    break;
+                default:
+                    break;
+            }
             return true;
         }
+    };
+
+    public boolean leftClickAction(InputEvent event, float x, float y) {
+        if (isSelected()) {
+            fireAt(x, y);
+            return true;
+        } else return false;
     }
 
-    @Override
-    public boolean rightClickAction(InputEvent event, float x, float y, int pointer, int button) {
+    public boolean middleClickAction(InputEvent event, float x, float y) {
         if(isSelected()) {
             deselect();
+            return true;
+        }
+        else return false;
+    }
+
+    public boolean rightClickAction(InputEvent event, float x, float y) {
+        if(isSelected()) {
+            //TODO: Move to location
             return true;
         }
         else return false;
@@ -48,13 +97,6 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
         public RotateTo() {
             coords = new Vector2();
-        }
-        public RotateTo(Vector2 v) {
-            super();
-            coords = new Vector2(v);
-        }
-        public RotateTo(float x, float y) {
-            coords = new Vector2(x, y);
         }
 
         public void setCoords(float x, float y) {
@@ -123,6 +165,8 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
         beam = new LaserBeam(new Vector2(48, 22), new Vector2(48, 24));
         addActor(beam);
+
+        addListener(selectListener);
     }
 
     public void lookAt(Vector2 v) {
@@ -136,10 +180,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
     }
 
     public void rotateToPoint(Vector2 v) {
-        rotateTo.setCoords(v.x, v.y);
-        if(!getActions().contains(rotateTo, true)) {
-            this.addAction(rotateTo);
-        }
+        rotateToPoint(v.x, v.y);
     }
 
     public void rotateToPoint(float x, float y) {
@@ -165,7 +206,16 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         beam.setLength(0);
     }
 
-    public void ignoreAClick() {
-        ignoreOneClick = true;
+    @Override
+    public void select() {
+        super.select();
+        getStage().addListener(stageListener);
+        selecting = true;
+    }
+
+    @Override
+    public void deselect() {
+        super.deselect();
+        getStage().removeListener(stageListener);
     }
 }

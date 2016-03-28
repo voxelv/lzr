@@ -31,38 +31,12 @@ public class WelcomeScreen extends AbstractGameScreen{
 
     TriangleBeamWeapon tri;
 
-    LZRClickHandler selectedActor;
-
     public WelcomeScreen(Game game) {
         super(game);
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(Const.WELCOME_VIEWPORT_WIDTH, Const.WELCOME_VIEWPORT_HEIGHT, camera);
         stage = new Stage(viewport);
-        stage.addListener(new ClickListener(){
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                super.clicked(event, x, y);
-                boolean result = false;
-                switch(button) {
-                    case Input.Buttons.LEFT:
-                        if(selectedActor != null) {
-                            result = selectedActor.leftClickAction(event, x, y, pointer, button);
-                        }
-                        break;
-                    case Input.Buttons.RIGHT:
-                        if(selectedActor != null) {
-                            result = selectedActor.rightClickAction(event, x, y, pointer, button);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return result;
-            }
-
-        });
 
         Gdx.input.setInputProcessor(stage);
 
@@ -92,26 +66,6 @@ public class WelcomeScreen extends AbstractGameScreen{
 
         tri = new TriangleBeamWeapon();
         tri.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri.getOriginY() - 5);
-        tri.addListener(new ClickListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                switch(button) {
-                    case Input.Buttons.LEFT:
-                        if (tri.isSelected()) {
-                            tri.deselect();
-                            setSelectedActor(null);
-                        } else {
-                            tri.select();
-                            tri.ignoreAClick();
-                            setSelectedActor(tri);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
         stage.addActor(tri);
     }
 
@@ -128,9 +82,5 @@ public class WelcomeScreen extends AbstractGameScreen{
     public void resize(int width, int height) {
         viewport.update(width, height, true);
         camera.update();
-    }
-
-    public void setSelectedActor(LZRClickHandler clickHandler) {
-        this.selectedActor = clickHandler;
     }
 }
