@@ -8,16 +8,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.*;
-import com.derelictech.lzr.util.Assets;
-import com.derelictech.lzr.util.Const;
+import com.derelictech.lzr.util.*;
 import com.derelictech.lzr.units.TriangleBeamWeapon;
-import com.derelictech.lzr.util.TextActor;
 
 
 /**
@@ -31,10 +26,12 @@ public class WelcomeScreen extends AbstractGameScreen{
 
     TextActor welcomeText;
     TextActor lzrText;
-    Button play_btn;
-    Button quit_btn;
+    LZRButton play_btn;
+    LZRButton quit_btn;
 
     TriangleBeamWeapon tri;
+
+    SelectableActor selectableActor;
 
     public WelcomeScreen(Game game) {
         super(game);
@@ -47,17 +44,18 @@ public class WelcomeScreen extends AbstractGameScreen{
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 super.clicked(event, x, y);
+                boolean result = false;
                 switch(button) {
                     case Input.Buttons.LEFT:
-                        tri.fireAt(x, y);
+                        result = tri.fireAt(x, y);
                         break;
                     case Input.Buttons.RIGHT:
-                        tri.stopFiring();
+                        result = tri.stopFiring();
                         break;
                     default:
                         break;
                 }
-                return true;
+                return result;
             }
 
         });
@@ -74,14 +72,14 @@ public class WelcomeScreen extends AbstractGameScreen{
         lzrText.font.setColor(0, 0.8f, 0.8f, 1);
         stage.addActor(lzrText);
 
-        play_btn = new Button(
+        play_btn = new LZRButton(
                 new TextureRegionDrawable(Assets.inst.getRegion("play_btn_up")),
                 new TextureRegionDrawable(Assets.inst.getRegion("play_btn_dn"))
         );
         play_btn.setPosition(lzrText.getX(), lzrText.getY() - 250);
         stage.addActor(play_btn);
 
-        quit_btn = new Button(
+        quit_btn = new LZRButton(
                 new TextureRegionDrawable(Assets.inst.getRegion("quit_btn_up")),
                 new TextureRegionDrawable(Assets.inst.getRegion("quit_btn_dn"))
         );
@@ -90,6 +88,15 @@ public class WelcomeScreen extends AbstractGameScreen{
 
         tri = new TriangleBeamWeapon();
         tri.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri.getOriginY() - 5);
+        tri.addListener(new ClickListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchDown(event, x, y, pointer, button);
+                if(tri.isSelected()) tri.deselect();
+                else tri.select();
+                return true;
+            }
+        });
         stage.addActor(tri);
     }
 

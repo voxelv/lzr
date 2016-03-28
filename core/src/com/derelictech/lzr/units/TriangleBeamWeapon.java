@@ -91,6 +91,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
     public TriangleBeamWeapon() {
         super("triangle");
+
         setOrigin(12.5f, 24.5f);
 
         beam = new LaserBeam(new Vector2(48, 22), new Vector2(48, 24));
