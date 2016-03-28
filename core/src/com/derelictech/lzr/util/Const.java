@@ -5,8 +5,8 @@ package com.derelictech.lzr.util;
  */
 public class Const {
 
-    public static final float WELCOME_VIEWPORT_WIDTH = 2000.0f;
-    public static final float WELCOME_VIEWPORT_HEIGHT = 1000.0f;
+    public static final float WELCOME_VIEWPORT_WIDTH = 768.0f;
+    public static final float WELCOME_VIEWPORT_HEIGHT = 480.0f;
 
     public static final String WELCOME_TEXT = "Welcome to";
     public static final String GAME_NAME = "LZR";

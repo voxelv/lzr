@@ -65,7 +65,7 @@ public class WelcomeScreen extends AbstractGameScreen{
         Gdx.input.setInputProcessor(stage);
 
         welcomeText = new TextActor(Const.WELCOME_TEXT, 80);
-        welcomeText.setPosition(100, Gdx.graphics.getHeight() - welcomeText.getHeight());
+        welcomeText.setPosition(100, viewport.getScreenHeight() - welcomeText.getHeight() + 50);
         welcomeText.font.setColor(1, 0, 0, 1);
         stage.addActor(welcomeText);
 
@@ -89,7 +89,7 @@ public class WelcomeScreen extends AbstractGameScreen{
         stage.addActor(quit_btn);
 
         tri = new TriangleBeamWeapon();
-        tri.setPosition(1000, 500);
+        tri.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri.getOriginY() - 5);
         stage.addActor(tri);
     }
 
