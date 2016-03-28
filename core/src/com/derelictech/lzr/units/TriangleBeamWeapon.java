@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.derelictech.lzr.effects.LaserBeam;
 import com.derelictech.lzr.util.AbstractLZRActorGroup;
 
@@ -14,6 +15,31 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
     private LaserBeam beam;
     private static float rotationSpeed = 180;
+
+    private boolean ignoreOneClick = false;
+
+    @Override
+    public boolean leftClickAction(InputEvent event, float x, float y, int pointer, int button) {
+        if(!ignoreOneClick) {
+            if (isSelected()) {
+                fireAt(x, y);
+                return true;
+            } else return false;
+        }
+        else {
+            ignoreOneClick = false;
+            return true;
+        }
+    }
+
+    @Override
+    public boolean rightClickAction(InputEvent event, float x, float y, int pointer, int button) {
+        if(isSelected()) {
+            stopFiring();
+            return true;
+        }
+        else return false;
+    }
 
     private class RotateTo extends Action {
         private Vector2 coords;
@@ -136,5 +162,9 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
     public void stopFiring() {
         beam.setLength(0);
+    }
+
+    public void ignoreAClick() {
+        ignoreOneClick = true;
     }
 }

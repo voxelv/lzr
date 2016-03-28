@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 /**
  * Created by Tim on 3/26/2016.
  */
-public abstract class AbstractLZRActorGroup extends Group {
+public abstract class AbstractLZRActorGroup extends Group implements LZRClickHandler {
     TextureRegion region;
     Pixmap selector;
 
