@@ -35,7 +35,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
     @Override
     public boolean rightClickAction(InputEvent event, float x, float y, int pointer, int button) {
         if(isSelected()) {
-            stopFiring();
+            deselect();
             return true;
         }
         else return false;
@@ -59,6 +59,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
         public void setCoords(float x, float y) {
             coords.set(x, y);
+            follow = false;
         }
 
         public void setFollowActor(Actor followActor) {
