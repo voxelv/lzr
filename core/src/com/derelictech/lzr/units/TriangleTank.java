@@ -18,8 +18,8 @@ import com.derelictech.lzr.util.UsesResources;
 public class TriangleTank extends AbstractLZRActorGroup {
 
     private LaserBeam beam;
-    private static float rotationSpeed = 100;
-    private static float moveSpeed = 150;
+    private static float rotationSpeed = 180;
+    private static float moveSpeed = 250;
     private static float laserDPS = 25;
     private UsesResources targetActor;
     private Vector2 pos = new Vector2();
