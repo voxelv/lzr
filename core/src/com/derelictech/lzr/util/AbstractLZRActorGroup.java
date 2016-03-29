@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.Array;
 import com.derelictech.lzr.effects.Shield;
 import com.derelictech.lzr.effects.StatusBar;
 
@@ -15,10 +16,9 @@ import com.derelictech.lzr.effects.StatusBar;
  * Created by Tim on 3/26/2016.
  */
 public abstract class AbstractLZRActorGroup extends Group implements UsesResources{
-    TextureRegion region;
-    Pixmap selector;
-
-    
+    protected TextureRegion region;
+    private Pixmap selector;
+    private Array<UsesResources> firingAtMe;
 
     protected Shield shield;
     protected float maxEnergy = 25;
@@ -33,6 +33,8 @@ public abstract class AbstractLZRActorGroup extends Group implements UsesResourc
     public AbstractLZRActorGroup(String name) {
         shield = new Shield();
         addActor(shield);
+
+        firingAtMe = new Array<UsesResources>();
 
         this.region = Assets.inst.getRegion(name);
         if(this.region == null) {
@@ -169,7 +171,6 @@ public abstract class AbstractLZRActorGroup extends Group implements UsesResourc
             }
             else destroy();
         }
-        System.out.println(energyBar.getValue()+hpBar.getValue());
         return damage;
     }
 
@@ -178,5 +179,10 @@ public abstract class AbstractLZRActorGroup extends Group implements UsesResourc
         if (!destroyed) {
             destroyed = true;
         }
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }

@@ -85,8 +85,6 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         if (isSelected()) {
             stopFiring();
 
-            System.out.println(event.getTarget().toString());
-
             UsesResources actor;
             if(event.getTarget() instanceof UsesResources) {
                 actor = (UsesResources) event.getTarget();
@@ -110,6 +108,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
     public boolean rightClickAction(InputEvent event, float x, float y) {
         if(isSelected()) {
             //TODO: Move to location
+            stopFiring();
             return true;
         }
         else return false;
@@ -156,7 +155,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         private Vector2 coords;
         private boolean follow = false;
         private UsesResources followActor;
-        private boolean fireAfterRotate;
+        private boolean fireAfterRotate = false;
 
         public RotateTo() {
             coords = new Vector2();
@@ -184,7 +183,8 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                 if (getRotation() + (delta * rotationSpeed) > angle && angle > getRotation()) {
                     lookAt(coords);
                     if(fireAfterRotate) fireAt(followActor, coords);
-                    return true; // Done
+                    return(followActor == null);
+
                 }
 
                 // Default, rotate ccw
@@ -197,7 +197,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                 if (getRotation() - (delta * rotationSpeed) < angle && angle < getRotation()) {
                     lookAt(coords);
                     if(fireAfterRotate) fireAt(followActor, coords);
-                    return true; // Done
+                    return(followActor == null);
                 }
 
                 // Default, rotate cw
@@ -223,7 +223,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         }
 
         public void fireAfterRotate(boolean b) {
-            fireAfterRotate = true;
+            fireAfterRotate = b;
         }
     }
     private RotateTo rotateTo = new RotateTo();
@@ -269,10 +269,13 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
     public void fireAt(UsesResources actor, Vector2 coords) {
         fireLaser.setActor(actor);
         fireLaser.setCoords(coords);
-        addAction(fireLaser);
+        if(!getActions().contains(fireLaser, true)) addAction(fireLaser);
+
+        if(actor != null && actor.isDestroyed()) stopFiring();
     }
 
     public void stopFiring() {
+        rotateTo.fireAfterRotate(false);
         fireLaser.stopFiring();
     }
 }

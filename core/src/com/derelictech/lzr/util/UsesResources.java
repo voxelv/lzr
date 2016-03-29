@@ -25,4 +25,5 @@ public interface UsesResources {
 
     Vector2 getDestroyPoint();
     void destroy();
+    boolean isDestroyed();
 }
