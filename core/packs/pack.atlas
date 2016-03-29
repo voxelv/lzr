@@ -1,54 +1,54 @@
 
 pack.png
-size: 512,512
+size: 512,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-badlogic
-  rotate: false
-  xy: 2, 126
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
 beam
   rotate: false
-  xy: 442, 377
+  xy: 496, 176
   size: 3, 5
   orig: 3, 5
   offset: 0, 0
   index: -1
 play_btn_dn
   rotate: false
-  xy: 2, 64
+  xy: 132, 121
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
 play_btn_up
   rotate: false
-  xy: 260, 322
+  xy: 132, 59
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
 quit_btn_dn
   rotate: false
-  xy: 2, 2
+  xy: 314, 121
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
 quit_btn_up
   rotate: false
-  xy: 260, 260
+  xy: 314, 59
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
+shield
+  rotate: false
+  xy: 2, 53
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
 triangle
   rotate: false
-  xy: 184, 75
+  xy: 2, 2
   size: 49, 49
   orig: 49, 49
   offset: 0, 0

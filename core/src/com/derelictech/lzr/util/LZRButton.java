@@ -1,27 +1,34 @@
 package com.derelictech.lzr.util;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
+import com.derelictech.lzr.effects.Shield;
 
 /**
  * Created by Tim on 3/27/2016.
  */
 public class LZRButton extends Button implements UsesResources {
 
-    private long energy = 1000;
-    private long hp = 100;
+    private long maxenergy = 1000;
+    private long energy;
+    private long maxhp = 100;
+    private long hp;
+
+    private Shield shield;
 
     public LZRButton(Drawable up, Drawable down) {
         super(up, down);
-        removeListener(this.getClickListener());
-        addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                return false;
-            }
-        });
+        removeListener(getClickListener());
+
+        energy = maxenergy;
+        hp = maxhp;
+
+        setOrigin(Align.center);
+        shield = new Shield();
+        addActor(shield);
     }
 
 
@@ -60,6 +67,11 @@ public class LZRButton extends Button implements UsesResources {
     }
 
     @Override
+    public Vector2 getDestroyPoint() {
+        return localToStageCoordinates(new Vector2(getOriginX(), getOriginY()));
+    }
+
+    @Override
     public long takeDamage(long damage) {
         long amount = damage;
         if(amount < energy) {
@@ -78,6 +90,12 @@ public class LZRButton extends Button implements UsesResources {
 
     @Override
     public void destroy() {
+        if (isDisabled()) return;
+        setChecked(true);
+    }
 
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
     }
 }
