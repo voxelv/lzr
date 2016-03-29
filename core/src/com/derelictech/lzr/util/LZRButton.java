@@ -1,68 +1,73 @@
 package com.derelictech.lzr.util;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.derelictech.lzr.effects.Shield;
 
 /**
  * Created by Tim on 3/27/2016.
  */
-public class LZRButton extends Button implements UsesResources {
+public class LZRButton extends AbstractLZRActorGroup implements UsesResources {
 
-    private long maxenergy = 1000;
-    private long energy;
-    private long maxhp = 100;
-    private long hp;
+    private TextureRegion up, dn;
+
+    private float maxenergy = 25;
+    private float energy;
+    private float maxhp = 50;
+    private float hp;
+    private boolean destroyed = false;
 
     private Shield shield;
 
-    public LZRButton(Drawable up, Drawable down) {
-        super(up, down);
-        removeListener(getClickListener());
+    public LZRButton(String up, String dn) {
+        super(up);
+        this.up = region;
+        this.dn = Assets.inst.getRegion(dn);
 
         energy = maxenergy;
         hp = maxhp;
 
         setOrigin(Align.center);
+
+        drawChildrenBefore(false);
         shield = new Shield();
         addActor(shield);
     }
 
 
     @Override
-    public long decreaseEnergyBy(long amount) {
+    public float decreaseEnergyBy(float amount) {
         energy -= amount;
         return energy;
     }
 
     @Override
-    public long increaseEnergyBy(long amount) {
+    public float increaseEnergyBy(float amount) {
         energy += amount;
         return energy;
     }
 
     @Override
-    public long getEnergy() {
+    public float getEnergy() {
         return energy;
     }
 
     @Override
-    public long decreaseHPBy(long amount) {
+    public float decreaseHPBy(float amount) {
         hp -= amount;
         return hp;
     }
 
     @Override
-    public long increaseHPBy(long amount) {
+    public float increaseHPBy(float amount) {
         hp += amount;
         return hp;
     }
 
     @Override
-    public long getHP() {
+    public float getHP() {
         return hp;
     }
 
@@ -72,26 +77,31 @@ public class LZRButton extends Button implements UsesResources {
     }
 
     @Override
-    public long takeDamage(long damage) {
-        long amount = damage;
+    public float takeDamage(float damage) {
+        if(destroyed) return -1;
+        float amount = damage;
         if(amount < energy) {
             decreaseEnergyBy(amount);
         }
         else {
             decreaseEnergyBy(energy);
+            shield.setVisible(false);
             amount -= energy;
             if(amount < hp) {
                 decreaseHPBy(amount);
             }
             else destroy();
         }
+        System.out.println(energy+hp);
         return damage;
     }
 
     @Override
     public void destroy() {
-        if (isDisabled()) return;
-        setChecked(true);
+        if (!destroyed) {
+            destroyed = true;
+            region = dn;
+        }
     }
 
     @Override

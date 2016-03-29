@@ -17,6 +17,7 @@ public abstract class AbstractLZRActorGroup extends Group{
     Pixmap selector;
 
     boolean selected = false;
+    private boolean drawChildrenBefore;
 
     public AbstractLZRActorGroup(String name) {
         this.region = Assets.inst.getRegion(name);
@@ -41,14 +42,28 @@ public abstract class AbstractLZRActorGroup extends Group{
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        applyTransform(batch, computeTransform());
-        drawChildren(batch, parentAlpha);
-        resetTransform(batch);
+        if(drawChildrenBefore) {
+            applyTransform(batch, computeTransform());
+            drawChildren(batch, parentAlpha);
+            resetTransform(batch);
+        }
+
         batch.draw(region, this.getX(), this.getY(), this.getOriginX(), this.getOriginY(),
                 this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());
+
+        if(!drawChildrenBefore) {
+            applyTransform(batch, computeTransform());
+            drawChildren(batch, parentAlpha);
+            resetTransform(batch);
+        }
+
         if(selected) {
             drawSelector(batch, parentAlpha);
         }
+    }
+
+    public void drawChildrenBefore(boolean b) {
+        drawChildrenBefore = b;
     }
 
     private void drawSelector(Batch batch, float parentAlpha) {

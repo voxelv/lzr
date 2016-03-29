@@ -50,17 +50,11 @@ public class WelcomeScreen extends AbstractGameScreen{
         lzrText.font.setColor(0, 0.8f, 0.8f, 1);
         stage.addActor(lzrText);
 
-        play_btn = new LZRButton(
-                new TextureRegionDrawable(Assets.inst.getRegion("play_btn_up")),
-                new TextureRegionDrawable(Assets.inst.getRegion("play_btn_dn"))
-        );
+        play_btn = new LZRButton("play_btn_up","play_btn_dn");
         play_btn.setPosition(lzrText.getX(), lzrText.getY() - 250);
         stage.addActor(play_btn);
 
-        quit_btn = new LZRButton(
-                new TextureRegionDrawable(Assets.inst.getRegion("quit_btn_up")),
-                new TextureRegionDrawable(Assets.inst.getRegion("quit_btn_dn"))
-        );
+        quit_btn = new LZRButton("quit_btn_up", "quit_btn_dn");
         quit_btn.setPosition(play_btn.getX(), play_btn.getY() - 70);
         stage.addActor(quit_btn);
 

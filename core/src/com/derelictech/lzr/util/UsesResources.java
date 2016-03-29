@@ -6,13 +6,13 @@ import com.badlogic.gdx.math.Vector2;
  * Created by Tim on 3/28/2016.
  */
 public interface UsesResources {
-    long decreaseEnergyBy(long amount);
-    long increaseEnergyBy(long amount);
-    long getEnergy();
+    float decreaseEnergyBy(float amount);
+    float increaseEnergyBy(float amount);
+    float getEnergy();
 
-    long decreaseHPBy(long amount);
-    long increaseHPBy(long amount);
-    long getHP();
+    float decreaseHPBy(float amount);
+    float increaseHPBy(float amount);
+    float getHP();
 
     float getX();
     float getY();
@@ -21,7 +21,7 @@ public interface UsesResources {
 
     Vector2 getDestroyPoint();
 
-    long takeDamage(long amount);
+    float takeDamage(float amount);
 
     void destroy();
 }

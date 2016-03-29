@@ -16,9 +16,41 @@ import com.derelictech.lzr.util.UsesResources;
 public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
     private LaserBeam beam;
-    private static float rotationSpeed = 45;
+    private static float rotationSpeed = 100;
+    private static float laserDPS = 25;
 
     private boolean selecting = false; // Ignore a click if it was the selecting click
+
+    private ClickListener selectListener = new ClickListener() {
+        @Override
+        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            switch(button) {
+                case Input.Buttons.LEFT:
+                    if (isSelected()) {
+                        deselect();
+                    } else {
+                        select();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    };
+
+    @Override
+    public void select() {
+        super.select();
+        getStage().addListener(stageListener);
+        selecting = true;
+    }
+
+    @Override
+    public void deselect() {
+        super.deselect();
+        getStage().removeListener(stageListener);
+    }
 
     private ClickListener stageListener = new ClickListener() {
         @Override
@@ -40,7 +72,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                     default:
                         break;
                 }
-            } else {
+            } else { // That was the selecting click, ignore once
                 selecting = false;
                 result = true;
             }
@@ -49,36 +81,17 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         }
     };
 
-    private ClickListener selectListener = new ClickListener() {
-        @Override
-        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            switch(button) {
-                case Input.Buttons.LEFT:
-                    if (isSelected()) {
-                        deselect();
-                    } else {
-                        select();
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    };
-
     public boolean leftClickAction(InputEvent event, float x, float y) {
         if (isSelected()) {
             stopFiring();
 
-            System.out.println(event.getTarget().toString());
             UsesResources actor;
             if(event.getTarget() instanceof UsesResources) {
                 actor = (UsesResources) event.getTarget();
-                fireAt(actor, x, y);
+                rotateTo(actor, x, y);
             }
             else {
-                fireAt(null, x, y);
+                rotateTo(null, x, y);
             }
             return true;
         } else return false;
@@ -100,28 +113,51 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         else return false;
     }
 
+    private class FireLaser extends Action {
+        private UsesResources actor;
+        private Vector2 coords;
+        public FireLaser(UsesResources actor, Vector2 coords) {
+            this.actor = actor;
+            this.coords = coords;
+        }
+
+        public void setActor(UsesResources actor) {
+            this.actor = actor;
+        }
+
+        public void setCoords(Vector2 coords) {
+            this.coords = coords;
+        }
+
+        public void stopFiring() {
+            beam.setLength(0);
+            this.actor = null;
+            this.coords = null;
+            removeAction(this);
+        }
+
+        @Override
+        public boolean act(float delta) {
+            if(actor != null && coords != null) {
+                beam.setLength(localToStageCoordinates(new Vector2(beam.getX(), beam.getY())).dst(coords));
+                actor.takeDamage(delta * laserDPS);
+            }
+            else if(actor == null && coords != null) {
+                beam.setLength(localToStageCoordinates(new Vector2(beam.getX(), beam.getY())).dst(coords));
+            }
+            return false;
+        }
+    }
+    private FireLaser fireLaser = new FireLaser(null, null);
+
     private class RotateTo extends Action {
         private Vector2 coords;
         private boolean follow = false;
         private UsesResources followActor;
+        private boolean fireAfterRotate;
 
         public RotateTo() {
             coords = new Vector2();
-        }
-
-        public void setCoords(Vector2 v) {
-            coords.set(v.x, v.y);
-            follow = false;
-        }
-
-        public void setCoords(float x, float y) {
-            coords.set(x, y);
-            follow = false;
-        }
-
-        public void setFollowActor(UsesResources followActor) {
-            this.followActor = followActor;
-            follow = true;
         }
 
         @Override
@@ -145,8 +181,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                 // End condition
                 if (getRotation() + (delta * rotationSpeed) > angle && angle > getRotation()) {
                     lookAt(coords);
-                    beam.setLength(localToStageCoordinates(new Vector2 (beam.getX(), beam.getY())).dst(coords));
-                    removeAction(rotateTo);
+                    if(fireAfterRotate) fireAt(followActor, coords);
                     return true; // Done
                 }
 
@@ -159,8 +194,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                 // End condition
                 if (getRotation() - (delta * rotationSpeed) < angle && angle < getRotation()) {
                     lookAt(coords);
-                    beam.setLength(localToStageCoordinates(new Vector2 (beam.getX(), beam.getY())).dst(coords));
-                    removeAction(rotateTo);
+                    if(fireAfterRotate) fireAt(followActor, coords);
                     return true; // Done
                 }
 
@@ -169,6 +203,25 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
                 if(getRotation() < -180) setRotation(180 - (getRotation() + 180));
                 return false;
             }
+        }
+
+        public void setCoords(Vector2 v) {
+            coords.set(v.x, v.y);
+            follow = false;
+        }
+
+        public void setCoords(float x, float y) {
+            coords.set(x, y);
+            follow = false;
+        }
+
+        public void setFollowActor(UsesResources followActor) {
+            this.followActor = followActor;
+            follow = true;
+        }
+
+        public void fireAfterRotate(boolean b) {
+            fireAfterRotate = true;
         }
     }
     private RotateTo rotateTo = new RotateTo();
@@ -194,16 +247,10 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         );
     }
 
-    public void rotateToPoint(float x, float y) {
-        rotateTo.setCoords(x, y);
-        if(!getActions().contains(rotateTo, true)) {
-            this.addAction(rotateTo);
-        }
-    }
-
-    public void fireAt(UsesResources actor, float x, float y) {
+    public void rotateTo(UsesResources actor, float x, float y) {
         if(actor != null) {
             rotateTo.setFollowActor(actor);
+            rotateTo.fireAfterRotate(true);
         }
         else {
             rotateTo.setFollowActor(null);
@@ -215,20 +262,13 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         }
     }
 
+    public void fireAt(UsesResources actor, Vector2 coords) {
+        fireLaser.setActor(actor);
+        fireLaser.setCoords(coords);
+        addAction(fireLaser);
+    }
+
     public void stopFiring() {
-        beam.setLength(0);
-    }
-
-    @Override
-    public void select() {
-        super.select();
-        getStage().addListener(stageListener);
-        selecting = true;
-    }
-
-    @Override
-    public void deselect() {
-        super.deselect();
-        getStage().removeListener(stageListener);
+        fireLaser.stopFiring();
     }
 }
