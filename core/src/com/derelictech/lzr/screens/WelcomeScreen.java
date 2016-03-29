@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.*;
+import com.derelictech.lzr.units.Army;
 import com.derelictech.lzr.units.TriangleTank;
 import com.derelictech.lzr.util.*;
 
@@ -26,8 +27,6 @@ public class WelcomeScreen extends AbstractGameScreen{
     TextActor lzrText;
     LZRButton play_btn;
     LZRButton quit_btn;
-
-    TriangleTank tri1;
 
     public WelcomeScreen(Game game) {
         super(game);
@@ -98,11 +97,11 @@ public class WelcomeScreen extends AbstractGameScreen{
         });
         stage.addActor(quit_btn);
 
-        tri1 = new TriangleTank();
+        TriangleTank tri1 = new TriangleTank(Army.PLAYER);
         tri1.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri1.getOriginY() - 5);
         stage.addActor(tri1);
 
-        TriangleTank tri2 = new TriangleTank();
+        TriangleTank tri2 = new TriangleTank(Army.PLAYER);
         tri2.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri2.getOriginY() - 5);
         stage.addActor(tri2);
     }

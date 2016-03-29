@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Align;
+import com.derelictech.lzr.units.Army;
 
 /**
  * Created by Tim on 3/27/2016.
@@ -14,7 +15,7 @@ public class LZRButton extends AbstractLZRActorGroup{
     private Action destroyAction;
 
     public LZRButton(String up, String dn) {
-        super(up);
+        super(up, Army.COMPUTER);
         this.up = region;
         this.dn = Assets.inst.getRegion(dn);
 

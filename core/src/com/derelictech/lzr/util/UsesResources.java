@@ -1,6 +1,7 @@
 package com.derelictech.lzr.util;
 
 import com.badlogic.gdx.math.Vector2;
+import com.derelictech.lzr.units.Army;
 
 /**
  * Created by Tim on 3/28/2016.
@@ -10,6 +11,8 @@ public interface UsesResources {
     float getY();
     float getOriginX();
     float getOriginY();
+
+    Army getArmy();
 
     float setMaxEnergy(float amount);
     float decreaseEnergyBy(float amount);

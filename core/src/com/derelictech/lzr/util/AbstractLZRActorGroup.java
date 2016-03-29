@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
 import com.derelictech.lzr.effects.Shield;
 import com.derelictech.lzr.effects.StatusBar;
+import com.derelictech.lzr.units.Army;
 
 /**
  * Created by Tim on 3/26/2016.
@@ -20,6 +21,7 @@ public abstract class AbstractLZRActorGroup extends Group implements UsesResourc
     private Pixmap selector;
     private Array<UsesResources> firingAtMe;
 
+    private Army army;
     protected Shield shield;
     protected float maxEnergy = 25;
     protected float maxHP = 50;
@@ -30,7 +32,8 @@ public abstract class AbstractLZRActorGroup extends Group implements UsesResourc
     boolean selected = false;
     private boolean drawChildrenBefore = false;
 
-    public AbstractLZRActorGroup(String name) {
+    public AbstractLZRActorGroup(String name, Army army) {
+        this.army = army;
         shield = new Shield();
         addActor(shield);
 
@@ -101,6 +104,11 @@ public abstract class AbstractLZRActorGroup extends Group implements UsesResourc
         return selected;
     }
 
+
+    @Override
+    public Army getArmy() {
+        return this.army;
+    }
 
     @Override
     public float setMaxEnergy(float amount) {

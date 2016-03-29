@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.derelictech.lzr.effects.LaserBeam;
 import com.derelictech.lzr.util.AbstractLZRActorGroup;
@@ -140,12 +142,13 @@ public class TriangleTank extends AbstractLZRActorGroup {
             else if(targetActor == null && targetPos != null) {
                 beam.setLength(localToStageCoordinates(new Vector2(beam.getX(), beam.getY())).dst(targetPos));
             }
-            return false;
+            addAction(rotateTo);
+            return true;
         }
     }
     private FireLaser fireLaser = new FireLaser();
 
-    private class RotateTo extends Action {
+    private class RotateTo extends TemporalAction {
         private boolean follow = false;
         private Action nextAction;
 
@@ -170,12 +173,15 @@ public class TriangleTank extends AbstractLZRActorGroup {
                 // End condition
                 if (getRotation() + (delta * rotationSpeed) > angle && angle > getRotation()) {
                     lookAt(targetPos);
+                    removeAction(this);
                     if(nextAction != null) addAction(nextAction);
                     return true;
                 }
+                else {
+                    // Default, rotate ccw
+                    rotateBy(delta * rotationSpeed);
+                }
 
-                // Default, rotate ccw
-                rotateBy(delta * rotationSpeed);
                 if (getRotation() > 180) setRotation(-180 + (getRotation() - 180));
                 return false;
             }
@@ -183,15 +189,23 @@ public class TriangleTank extends AbstractLZRActorGroup {
                 // End condition
                 if (getRotation() - (delta * rotationSpeed) < angle && angle < getRotation()) {
                     lookAt(targetPos);
+                    removeAction(this);
                     if(nextAction != null) addAction(nextAction);
                     return true;
                 }
+                else {
+                    // Default, rotate cw
+                    rotateBy(-(delta * rotationSpeed));
+                }
 
-                // Default, rotate cw
-                rotateBy(-(delta * rotationSpeed));
                 if(getRotation() < -180) setRotation(180 - (getRotation() + 180));
                 return false;
             }
+        }
+
+        @Override
+        protected void update(float percent) {
+
         }
 
         public void setCoords(Vector2 v) {
@@ -210,8 +224,9 @@ public class TriangleTank extends AbstractLZRActorGroup {
     }
     private RotateTo rotateTo = new RotateTo();
 
-    public TriangleTank() {
-        super("triangle");
+    public TriangleTank(Army army) {
+        super("triangle", army);
+
         shield.setVisible(false);
 
         setOrigin(12.5f, 24.5f);
