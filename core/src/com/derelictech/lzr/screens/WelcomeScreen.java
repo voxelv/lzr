@@ -2,19 +2,15 @@ package com.derelictech.lzr.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.*;
 import com.derelictech.lzr.units.TriangleTank;
 import com.derelictech.lzr.util.*;
-import com.derelictech.lzr.units.TriangleBeamWeapon;
 
 
 /**
@@ -31,7 +27,7 @@ public class WelcomeScreen extends AbstractGameScreen{
     LZRButton play_btn;
     LZRButton quit_btn;
 
-    TriangleTank tri;
+    TriangleTank tri1;
 
     public WelcomeScreen(Game game) {
         super(game);
@@ -52,8 +48,25 @@ public class WelcomeScreen extends AbstractGameScreen{
         lzrText.font.setColor(0, 0.8f, 0.8f, 1);
         stage.addActor(lzrText);
 
+        TextActor instruct1 = new TextActor("1. Left Click a Triangle Tank to select it.", 20);
+        TextActor instruct2 = new TextActor("2. Left Click to fire, shoot the buttons for practice.", 20);
+        TextActor instruct3 = new TextActor("3. Right Click while selected to move it.", 20);
+        TextActor instruct4 = new TextActor("4. Middle Click to deselect.", 20);
+        instruct1.setPosition(lzrText.getX(), lzrText.getY() - instruct1.getHeight() - 125);
+        instruct2.setPosition(lzrText.getX(), instruct1.getY() - instruct2.getHeight() - 5);
+        instruct3.setPosition(lzrText.getX(), instruct2.getY() - instruct3.getHeight() - 5);
+        instruct4.setPosition(lzrText.getX(), instruct3.getY() - instruct4.getHeight() - 5);
+        instruct1.font.setColor(Color.GREEN);
+        instruct2.font.setColor(Color.GREEN);
+        instruct3.font.setColor(Color.GREEN);
+        instruct4.font.setColor(Color.GREEN);
+        stage.addActor(instruct1);
+        stage.addActor(instruct2);
+        stage.addActor(instruct3);
+        stage.addActor(instruct4);
+
         play_btn = new LZRButton("play_btn_up","play_btn_dn");
-        play_btn.setPosition(lzrText.getX(), lzrText.getY() - 250);
+        play_btn.setPosition(lzrText.getX(), lzrText.getY() - 300);
         play_btn.setDestroyAction(new Action() {
             float countDown = 1.5f;
             @Override
@@ -85,9 +98,13 @@ public class WelcomeScreen extends AbstractGameScreen{
         });
         stage.addActor(quit_btn);
 
-        tri = new TriangleTank();
-        tri.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri.getOriginY() - 5);
-        stage.addActor(tri);
+        tri1 = new TriangleTank();
+        tri1.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri1.getOriginY() - 5);
+        stage.addActor(tri1);
+
+        TriangleTank tri2 = new TriangleTank();
+        tri2.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri2.getOriginY() - 5);
+        stage.addActor(tri2);
     }
 
     @Override

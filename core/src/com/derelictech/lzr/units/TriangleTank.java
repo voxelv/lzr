@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.derelictech.lzr.effects.LaserBeam;
@@ -19,7 +18,7 @@ public class TriangleTank extends AbstractLZRActorGroup {
 
     private LaserBeam beam;
     private static float rotationSpeed = 100;
-    private static float moveSpeed = 400;
+    private static float moveSpeed = 150;
     private static float laserDPS = 25;
     private UsesResources targetActor;
     private Vector2 targetPos = new Vector2();
@@ -122,13 +121,6 @@ public class TriangleTank extends AbstractLZRActorGroup {
         } else return false;
     }
 
-    private class MoveTo extends Action {
-
-        @Override
-        public boolean act(float delta) {
-            return false;
-        }
-    }
     private MoveToAction moveTo = new MoveToAction();
 
     private class FireLaser extends Action {
@@ -180,7 +172,6 @@ public class TriangleTank extends AbstractLZRActorGroup {
                     lookAt(targetPos);
                     if(nextAction != null) addAction(nextAction);
                     return true;
-
                 }
 
                 // Default, rotate ccw
@@ -265,5 +256,11 @@ public class TriangleTank extends AbstractLZRActorGroup {
 
     public void stopFiring() {
         fireLaser.stopFiring();
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.remove();
     }
 }
