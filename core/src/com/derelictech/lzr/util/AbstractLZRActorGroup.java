@@ -5,21 +5,35 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.derelictech.lzr.effects.Shield;
+import com.derelictech.lzr.effects.StatusBar;
 
 /**
  * Created by Tim on 3/26/2016.
  */
-public abstract class AbstractLZRActorGroup extends Group{
+public abstract class AbstractLZRActorGroup extends Group implements UsesResources{
     TextureRegion region;
     Pixmap selector;
 
+    
+
+    protected Shield shield;
+    protected float maxEnergy = 25;
+    protected float maxHP = 50;
+    protected boolean destroyed = false;
+
+    StatusBar energyBar, hpBar;
+
     boolean selected = false;
-    private boolean drawChildrenBefore;
+    private boolean drawChildrenBefore = false;
 
     public AbstractLZRActorGroup(String name) {
+        shield = new Shield();
+        addActor(shield);
+
         this.region = Assets.inst.getRegion(name);
         if(this.region == null) {
             throw new NullPointerException("Region doesn't exist");
@@ -27,17 +41,19 @@ public abstract class AbstractLZRActorGroup extends Group{
 
         setBounds(0, 0, region.getRegionWidth(), region.getRegionHeight());
 
+        energyBar = new StatusBar(Color.CYAN, new Vector2(this.getX(), this.getY()), maxEnergy);
+        hpBar = new StatusBar(Color.RED, new Vector2(this.getX(), this.getY() + energyBar.getHeight()), maxHP);
+        energyBar.setWidth(getWidth()/5);
+        hpBar.setWidth(getWidth()/5);
+        addActor(energyBar);
+        addActor(hpBar);
+
         setTouchable(Touchable.enabled);
 
         selector = new Pixmap((int) getWidth() + 2, (int) getHeight(), Pixmap.Format.RGBA8888);
         selector.setColor(Color.GREEN);
         selector.drawRectangle(0, 0, selector.getWidth(), selector.getHeight());
         selector.drawRectangle(1, 1, selector.getWidth() - 2, selector.getHeight() - 2);
-    }
-
-    @Override
-    public Actor hit(float x, float y, boolean touchable) {
-        return super.hit(x, y, touchable);
     }
 
     @Override
@@ -81,5 +97,86 @@ public abstract class AbstractLZRActorGroup extends Group{
 
     public boolean isSelected(){
         return selected;
+    }
+
+
+    @Override
+    public float setMaxEnergy(float amount) {
+        maxEnergy = amount;
+        energyBar.setMaxValue(amount);
+        return maxEnergy;
+    }
+
+    @Override
+    public float setMaxHP(float amount) {
+        maxHP = amount;
+        hpBar.setMaxValue(amount);
+        return maxHP;
+    }
+
+    @Override
+    public float decreaseEnergyBy(float amount) {
+        energyBar.decr(amount);
+        return energyBar.getValue();
+    }
+
+    @Override
+    public float increaseEnergyBy(float amount) {
+        energyBar.incr(amount);
+        return energyBar.getValue();
+    }
+
+    @Override
+    public float getEnergy() {
+        return energyBar.getValue();
+    }
+
+    @Override
+    public float decreaseHPBy(float amount) {
+        hpBar.decr(amount);
+        return hpBar.getValue();
+    }
+
+    @Override
+    public float increaseHPBy(float amount) {
+        hpBar.incr(amount);
+        return hpBar.getValue();
+    }
+
+    @Override
+    public float getHP() {
+        return hpBar.getValue();
+    }
+
+    @Override
+    public Vector2 getDestroyPoint() {
+        return localToStageCoordinates(new Vector2(getOriginX(), getOriginY()));
+    }
+
+    @Override
+    public float takeDamage(float damage) {
+        if(destroyed) return -1;
+        float amount = damage;
+        if(amount < energyBar.getValue()) {
+            decreaseEnergyBy(amount);
+        }
+        else {
+            decreaseEnergyBy(energyBar.getValue());
+            shield.setVisible(false);
+            amount -= energyBar.getValue();
+            if(amount < hpBar.getValue()) {
+                decreaseHPBy(amount);
+            }
+            else destroy();
+        }
+        System.out.println(energyBar.getValue()+hpBar.getValue());
+        return damage;
+    }
+
+    @Override
+    public void destroy() {
+        if (!destroyed) {
+            destroyed = true;
+        }
     }
 }

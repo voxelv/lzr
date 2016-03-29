@@ -85,6 +85,8 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         if (isSelected()) {
             stopFiring();
 
+            System.out.println(event.getTarget().toString());
+
             UsesResources actor;
             if(event.getTarget() instanceof UsesResources) {
                 actor = (UsesResources) event.getTarget();
@@ -228,6 +230,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
 
     public TriangleBeamWeapon() {
         super("triangle");
+        shield.setVisible(false);
 
         setOrigin(12.5f, 24.5f);
 
@@ -255,6 +258,7 @@ public class TriangleBeamWeapon extends AbstractLZRActorGroup {
         else {
             rotateTo.setFollowActor(null);
             rotateTo.setCoords(x, y);
+            rotateTo.fireAfterRotate(true);
         }
 
         if(!getActions().contains(rotateTo, true)) {

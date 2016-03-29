@@ -6,49 +6,63 @@ filter: Nearest,Nearest
 repeat: none
 beam
   rotate: false
-  xy: 496, 176
+  xy: 53, 53
   size: 3, 5
   orig: 3, 5
   offset: 0, 0
   index: -1
 play_btn_dn
   rotate: false
-  xy: 132, 121
+  xy: 132, 128
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
 play_btn_up
   rotate: false
-  xy: 132, 59
+  xy: 132, 66
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
 quit_btn_dn
   rotate: false
-  xy: 314, 121
+  xy: 314, 128
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
 quit_btn_up
   rotate: false
-  xy: 314, 59
+  xy: 314, 66
   size: 180, 60
   orig: 180, 60
   offset: 0, 0
   index: -1
 shield
   rotate: false
-  xy: 2, 53
+  xy: 2, 60
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
-triangle
+status_bar
+  rotate: false
+  xy: 496, 183
+  size: 5, 5
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
+status_bar_bg
   rotate: false
   xy: 2, 2
+  size: 5, 5
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
+triangle
+  rotate: false
+  xy: 2, 9
   size: 49, 49
   orig: 49, 49
   offset: 0, 0

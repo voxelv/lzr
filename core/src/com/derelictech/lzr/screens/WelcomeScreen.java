@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -52,10 +53,35 @@ public class WelcomeScreen extends AbstractGameScreen{
 
         play_btn = new LZRButton("play_btn_up","play_btn_dn");
         play_btn.setPosition(lzrText.getX(), lzrText.getY() - 250);
+        play_btn.setDestroyAction(new Action() {
+            float countDown = 1.5f;
+            @Override
+            public boolean act(float delta) {
+                countDown -= delta;
+                if(countDown <= 0) {
+                    // TODO GAME TRANSITION
+                    System.out.println("PLAY GAME");
+                    return true;
+                }
+                else return false;
+            }
+        });
         stage.addActor(play_btn);
 
         quit_btn = new LZRButton("quit_btn_up", "quit_btn_dn");
         quit_btn.setPosition(play_btn.getX(), play_btn.getY() - 70);
+        quit_btn.setDestroyAction(new Action() {
+            float countDown = 1.5f;
+            @Override
+            public boolean act(float delta) {
+                countDown -= delta;
+                if(countDown <= 0) {
+                    Gdx.app.exit();
+                    return true;
+                }
+                else return false;
+            }
+        });
         stage.addActor(quit_btn);
 
         tri = new TriangleBeamWeapon();
