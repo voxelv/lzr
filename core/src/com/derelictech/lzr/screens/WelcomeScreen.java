@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.*;
+import com.derelictech.lzr.units.TriangleTank;
 import com.derelictech.lzr.util.*;
 import com.derelictech.lzr.units.TriangleBeamWeapon;
 
@@ -30,7 +31,7 @@ public class WelcomeScreen extends AbstractGameScreen{
     LZRButton play_btn;
     LZRButton quit_btn;
 
-    TriangleBeamWeapon tri;
+    TriangleTank tri;
 
     public WelcomeScreen(Game game) {
         super(game);
@@ -84,7 +85,7 @@ public class WelcomeScreen extends AbstractGameScreen{
         });
         stage.addActor(quit_btn);
 
-        tri = new TriangleBeamWeapon();
+        tri = new TriangleTank();
         tri.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri.getOriginY() - 5);
         stage.addActor(tri);
     }
