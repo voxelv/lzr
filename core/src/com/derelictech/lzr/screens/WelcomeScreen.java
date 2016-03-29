@@ -67,7 +67,7 @@ public class WelcomeScreen extends AbstractGameScreen{
         play_btn = new LZRButton("play_btn_up","play_btn_dn");
         play_btn.setPosition(lzrText.getX(), lzrText.getY() - 300);
         play_btn.setDestroyAction(new Action() {
-            float countDown = 1.5f;
+            float countDown = 0.75f;
             @Override
             public boolean act(float delta) {
                 countDown -= delta;
@@ -84,7 +84,7 @@ public class WelcomeScreen extends AbstractGameScreen{
         quit_btn = new LZRButton("quit_btn_up", "quit_btn_dn");
         quit_btn.setPosition(play_btn.getX(), play_btn.getY() - 70);
         quit_btn.setDestroyAction(new Action() {
-            float countDown = 1.5f;
+            float countDown = 0.75f;
             @Override
             public boolean act(float delta) {
                 countDown -= delta;

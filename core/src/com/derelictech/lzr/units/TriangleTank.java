@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.derelictech.lzr.effects.LaserBeam;
@@ -23,6 +22,7 @@ public class TriangleTank extends AbstractLZRActorGroup {
     private static float moveSpeed = 150;
     private static float laserDPS = 25;
     private UsesResources targetActor;
+    private Vector2 pos = new Vector2();
     private Vector2 targetPos = new Vector2();
 
     private boolean selecting = false; // Ignore a click if it was the selecting click
@@ -115,7 +115,6 @@ public class TriangleTank extends AbstractLZRActorGroup {
 
     public boolean rightClickAction(InputEvent event, float x, float y) {
         if (isSelected()) {
-            //TODO: Move to location
             targetPos.set(x, y);
             stopFiring();
             rotateAndMove();
@@ -123,99 +122,87 @@ public class TriangleTank extends AbstractLZRActorGroup {
         } else return false;
     }
 
-    private MoveToAction moveTo = new MoveToAction();
-
     private class FireLaser extends Action {
 
         public void stopFiring() {
             beam.setLength(0);
+            removeAction(rotateTo);
             removeAction(this);
         }
 
         @Override
         public boolean act(float delta) {
-            if(targetActor != null && targetPos != null) {
+            if(targetActor != null) {
+                if(targetActor.getArmy() == TriangleTank.this.getArmy()) return true; // Don't fire on friendlies
+
+                targetPos.set(targetActor.getDestroyPoint());
                 beam.setLength(localToStageCoordinates(new Vector2(beam.getX(), beam.getY())).dst(targetPos));
                 targetActor.takeDamage(delta * laserDPS);
-                if(targetActor.isDestroyed()) stopFiring();
+
+                if(targetActor.isDestroyed()) {
+                    stopFiring();
+                    return true;
+                }
+
+                removeAction(this);
+                rotateTo.reset();
+                rotateTo.setNextAction(this);
+                addAction(rotateTo);
+                return true;
             }
-            else if(targetActor == null && targetPos != null) {
+            else if(targetPos != null) {
                 beam.setLength(localToStageCoordinates(new Vector2(beam.getX(), beam.getY())).dst(targetPos));
             }
-            addAction(rotateTo);
+
             return true;
         }
     }
     private FireLaser fireLaser = new FireLaser();
 
     private class RotateTo extends TemporalAction {
-        private boolean follow = false;
+        private float original;
+        private float angleRelative;
+        private float degreesToRotate;
         private Action nextAction;
 
         @Override
-        public boolean act(float delta) {
-            if(follow) {
+        protected void update(float percent) {
+            if(targetActor != null) {
                 setCoords(targetActor.getDestroyPoint());
             }
 
-            float angle = (float) (MathUtils.radiansToDegrees * Math.atan2(targetPos.y - getY() - getOriginY(),
-                    targetPos.x - getX() - getOriginX())); // angle between -180 and 180
-
-            boolean ccw;
-            if(getRotation() - angle > 0) {
-                ccw = Math.abs(getRotation() - angle) >= 180;
+            setRotation(original + (degreesToRotate * percent));
+            if(TriangleTank.this.getRotation() > 180) {
+                TriangleTank.this.setRotation(TriangleTank.this.getRotation() - 360);
+                original -= 360;
             }
-            else {
-                ccw = Math.abs(getRotation() - angle) <= 180;
-            }
-
-            if(ccw) {
-                // End condition
-                if (getRotation() + (delta * rotationSpeed) > angle && angle > getRotation()) {
-                    lookAt(targetPos);
-                    removeAction(this);
-                    if(nextAction != null) addAction(nextAction);
-                    return true;
-                }
-                else {
-                    // Default, rotate ccw
-                    rotateBy(delta * rotationSpeed);
-                }
-
-                if (getRotation() > 180) setRotation(-180 + (getRotation() - 180));
-                return false;
-            }
-            else {
-                // End condition
-                if (getRotation() - (delta * rotationSpeed) < angle && angle < getRotation()) {
-                    lookAt(targetPos);
-                    removeAction(this);
-                    if(nextAction != null) addAction(nextAction);
-                    return true;
-                }
-                else {
-                    // Default, rotate cw
-                    rotateBy(-(delta * rotationSpeed));
-                }
-
-                if(getRotation() < -180) setRotation(180 - (getRotation() + 180));
-                return false;
+            if(TriangleTank.this.getRotation() < -180) {
+                TriangleTank.this.setRotation(TriangleTank.this.getRotation() + 360);
+                original += 360;
             }
         }
 
         @Override
-        protected void update(float percent) {
+        protected void begin() {
+            original = TriangleTank.this.getRotation();
+            angleRelative = (float) (MathUtils.radiansToDegrees * Math.atan2(targetPos.y - getY() - getOriginY(),
+                    targetPos.x - getX() - getOriginX())); // angle between -180 and 180
+            degreesToRotate = angleRelative - TriangleTank.this.getRotation();
+            if(degreesToRotate > 180) degreesToRotate -= 360;
+            if(degreesToRotate < -180) degreesToRotate += 360;
+            setDuration(Math.abs(degreesToRotate) / rotationSpeed);
+            System.out.println("Before Rotation Angle: " + TriangleTank.this.getRotation()
+            + " angleRelative: " + angleRelative + " degreesToRotate: " + degreesToRotate);
+        }
 
+        @Override
+        protected void end() {
+            if(nextAction != null && !getActions().contains(nextAction, true)) addAction(nextAction);
+            System.out.println("DONE ROTATING");
         }
 
         public void setCoords(Vector2 v) {
             targetPos.set(v.x, v.y);
-            follow = false;
-        }
-
-        public void setCoords(float x, float y) {
-            targetPos.set(x, y);
-            follow = false;
         }
 
         public void setNextAction(Action action) {
@@ -223,6 +210,8 @@ public class TriangleTank extends AbstractLZRActorGroup {
         }
     }
     private RotateTo rotateTo = new RotateTo();
+
+    private MoveToAction moveTo = new MoveToAction();
 
     public TriangleTank(Army army) {
         super("triangle", army);
@@ -249,19 +238,23 @@ public class TriangleTank extends AbstractLZRActorGroup {
 
     public void rotateAndFire() {
         stopFiring();
+        removeAction(moveTo);
+        removeAction(fireLaser);
+        removeAction(rotateTo);
+        rotateTo.reset();
         rotateTo.setNextAction(fireLaser);
-
-        if(!getActions().contains(rotateTo, true)) {
-            this.addAction(rotateTo);
-        }
+        addAction(rotateTo);
     }
 
     public void rotateAndMove() {
         stopFiring();
         removeAction(moveTo);
+        removeAction(fireLaser);
+        removeAction(rotateTo);
         moveTo.reset();
         moveTo.setPosition(targetPos.x - getOriginX(), targetPos.y - getOriginY());
         moveTo.setDuration(targetPos.dst(getX(), getY()) / moveSpeed);
+        rotateTo.reset();
         rotateTo.setNextAction(moveTo);
 
         if(!getActions().contains(rotateTo, true)) {
@@ -276,6 +269,7 @@ public class TriangleTank extends AbstractLZRActorGroup {
     @Override
     public void destroy() {
         super.destroy();
+        deselect();
         this.remove();
     }
 }
