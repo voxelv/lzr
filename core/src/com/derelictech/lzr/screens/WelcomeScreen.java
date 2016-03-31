@@ -73,7 +73,6 @@ public class WelcomeScreen extends AbstractGameScreen{
                 countDown -= delta;
                 if(countDown <= 0) {
                     // TODO GAME TRANSITION
-                    System.out.println("PLAY GAME");
                     return true;
                 }
                 else return false;
@@ -101,7 +100,7 @@ public class WelcomeScreen extends AbstractGameScreen{
         tri1.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri1.getOriginY() - 5);
         stage.addActor(tri1);
 
-        TriangleTank tri2 = new TriangleTank(Army.PLAYER);
+        TriangleTank tri2 = new TriangleTank(Army.COMPUTER);
         tri2.setPosition(play_btn.getX() + play_btn.getWidth() + 200, play_btn.getY() - tri2.getOriginY() - 5);
         stage.addActor(tri2);
     }

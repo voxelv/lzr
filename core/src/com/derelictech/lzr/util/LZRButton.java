@@ -29,7 +29,6 @@ public class LZRButton extends AbstractLZRActorGroup{
         if (!destroyed) {
             destroyed = true;
             region = dn;
-            System.out.println("DESTROYED");
             addAction(destroyAction);
         }
     }

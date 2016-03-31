@@ -191,14 +191,11 @@ public class TriangleTank extends AbstractLZRActorGroup {
             if(degreesToRotate > 180) degreesToRotate -= 360;
             if(degreesToRotate < -180) degreesToRotate += 360;
             setDuration(Math.abs(degreesToRotate) / rotationSpeed);
-            System.out.println("Before Rotation Angle: " + TriangleTank.this.getRotation()
-            + " angleRelative: " + angleRelative + " degreesToRotate: " + degreesToRotate);
         }
 
         @Override
         protected void end() {
             if(nextAction != null && !getActions().contains(nextAction, true)) addAction(nextAction);
-            System.out.println("DONE ROTATING");
         }
 
         public void setCoords(Vector2 v) {
