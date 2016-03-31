@@ -7,12 +7,12 @@ import com.derelictech.lzr.LZR;
 
 public class DesktopLauncher {
 
-	private static boolean repackTextures = true;
+	private static boolean repackTextures = false;
 
 	public static void main (String[] arg) {
 
         if(repackTextures) {
-            TexturePacker.process(".", "../packs", "pack");
+            TexturePacker.process(".", "packs", "pack");
         }
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

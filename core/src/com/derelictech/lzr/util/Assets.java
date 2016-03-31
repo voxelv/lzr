@@ -16,7 +16,7 @@ public class Assets implements Disposable{
     public Assets() {}
 
     public void init() {
-        atlas = new TextureAtlas("../packs/pack.atlas");
+        atlas = new TextureAtlas("packs/pack.atlas");
     }
 
     public TextureRegion getRegion(String name) {
